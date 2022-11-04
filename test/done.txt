@@ -1,0 +1,83 @@
+def Go(self):
+        gantt = self.comboBox.currentText() == "Gantt"
+        TFR = self.comboBox.currentText() == "TFR"
+        TAR = self.comboBox.currentText() == "TAR"
+        TAP = self.comboBox.currentText() == "TAP"
+
+        C1 = not self.avecprep.isChecked() and not self.avecdelai.isChecked()
+        C2 = self.avecprep.isChecked() and not self.avecdelai.isChecked()
+        C3 = not self.avecprep.isChecked() and self.avecdelai.isChecked()
+        C4 = self.avecprep.isChecked() and self.avecdelai.isChecked()
+
+
+
+def Fill(self):
+        row = self.spinBox.value()
+        column = self.spinBox_2.value()
+
+        self.maintable.setColumnCount(column)
+        self.maintable.setRowCount(row)
+
+        for i in range(row):
+            item = QtWidgets.QTableWidgetItem()
+            self.maintable.setVerticalHeaderItem(i, item)
+        for j in range(column):
+            item = QtWidgets.QTableWidgetItem()
+            self.maintable.setHorizontalHeaderItem(j, item)
+        _translate = QtCore.QCoreApplication.translate
+        for i in range(row):
+            item = self.maintable.verticalHeaderItem(i)
+            item.setText(_translate("MES_App", "Machine"+str(i + 1)))
+        for j in range(column):
+            item = self.maintable.horizontalHeaderItem(j)
+            item.setText(_translate("MES_APP", "Job"+str(j+1)))
+
+        if self.prep.isChecked():
+            self.preparationTable(column, row)
+
+        if self.delay.isChecked():
+            self.delaytable.setVisible(True)
+
+            self.delaytable.setColumnCount(column)
+            self.delaytable.setRowCount(1)
+
+            for j in range(column):
+                item = QtWidgets.QTableWidgetItem()
+                self.delaytable.setHorizontalHeaderItem(j, item)
+            _translate = QtCore.QCoreApplication.translate
+            for j in range(column):
+                item = self.delaytable.horizontalHeaderItem(j)
+                item.setText(_translate("MES_APP", "Job"+str(j+1)))
+
+        elif not self.delay.isChecked():
+            self.delaytable.setVisible(False)
+
+
+
+def preparationTable(self, n, m):
+
+        self.prepMatrix=[[[]*n]*n]*m
+        
+        for j in range(m+1):
+            if m + 1 == self.tabWidget.currentIndex():
+                break
+            table = QTableWidget()
+            
+            page = QWidget()
+            page.layout = QVBoxLayout()
+            page.layout.addWidget(table)
+            page.setLayout(page.layout)
+        
+            self.tabWidget.addTab(page,"Machine "+str(j+1))
+            
+            tab = self.tabWidget.widget(j+1).children()[1]
+            tab.setRowCount(n)
+            tab.setColumnCount(n)
+            tab.clear()
+            
+            headers=["Job "+str(i+1) for i in range(n)]
+            
+            tab.setHorizontalHeaderLabels(headers)
+            tab.setVerticalHeaderLabels(headers)
+            tab.horizontalHeader().setStretchLastSection(True)
+            tab.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
